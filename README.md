@@ -5,7 +5,7 @@ In square brackets there are indicated references to the equations or paragraphs
 
 Initially Inspired by: https://github.com/FrancescoSaverioZuppichini/Reinforcement-Learning-Cheat-Sheet but quite completely rewritten.
 
-A lot of tenses are extracted from Sutton-Barto Books and/or Coursera Specialization on Reinforcement Learning (https://www.coursera.org/specializations/reinforcement-learning).
+A lot of tenses are extracted from Sutton-Barto Book and/or Coursera Specialization on Reinforcement Learning (https://www.coursera.org/specializations/reinforcement-learning).
 
 Work-In-Progress
 
