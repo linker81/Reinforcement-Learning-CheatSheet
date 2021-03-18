@@ -114,29 +114,6 @@ $\mathbb{E}[X | Y = y_j] = \sum_{z_k} Pr\{Z=z_k | Y = y_j\} \cdot \mathbb{E}[X|Y
 \end{center}
 The Agent at each step $t$ receives a representation of the environment's \emph{state} $S_t \in \mathcal{S}$ and it selects an action $A_t \in \mathcal{A}(s)$. One time step later, as a consequence of its action, the agent receives a \emph{reward}, $R_{t + 1} \in \mathcal{R} \subseteq \mathbb{R}$ and goes to the new state $S_{t+1}$.
 
-The MDP and agent together thereby give rise to a sequence or trajectory that begins like this:
-$S_0,A_0,R_1,S_1,A_1,R_2,S_2,A_2,R_3...$
-
-\subsection{Return}
-The \emph{return} is a some specific function of reward sequence. When there is a natural notion of final time step ($T$), the agent-environment interaction breaks naturally into sub-sequences (\emph{episodes}). Each episodes ends in a special state called \emph{terminal state}. $\mathcal{S}^{+}$ is the set of all states plus the terminal state.
-
-The \emph{total discounted return} is expressed as the sum of rewards (opportunely discounted with $\gamma$):
-\begin{align*}
-G_t & \stackrel{.}{=} R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + ...\\
-& = \sum_{k = 0}^\infty \gamma^k R_{t + k + 1} \numberthis \label{eq:discounted_return_1} \quad [3.8]\\
-& = R_{t+1} + \gamma G_{t+1} \numberthis \label{eq:discounted_return_2} \quad [3.9]
-\end{align*}
-Where $\gamma$ is the \emph{discount factor} and $T$ is the final time step. It can be infinite.
-When there is a natural notion of final time step, we have the \emph{episodes}.
-
-\subsection{Policy}
-A \emph{policy} is a mapping from a state to probabilities of selecting each possible action:
-\begin{equation}
-\pi(a|s)
-\label{eq: policy}
-\end{equation}
-That is the probability of select an action $A_t = a$ if $S_t = s$.
-
 \subsection{Markov Decision Process}
 A finite \textbf{Markov Decision Process}, MDP, is defined by:	\\
 finite set of states:  $s \in \mathcal{S}$, \\
@@ -161,9 +138,45 @@ r(s',s, a) & \stackrel{.}{=} \mathbb{E}[ R_{t} | S_{t-1} = s, A_{t-1} = a, S_{t}
 & = \sum_{r \in \mathcal{R}} r \cdot \frac{p(s', r | s, a)}{p(s' | s,a)} \quad [3.6] \numberthis
 \end{align*}
 
+The MDP and agent together thereby give rise to a sequence or \emph{trajectory} that begins like this:
+$S_0,A_0,R_1,S_1,A_1,R_2,S_2,A_2,R_3...$
+
+\subsection{Return}
+In RL the goal of the agent is not the maximization of the immediate reward, but of the cumulative reward in the long run. The \emph{return} is a specific function of reward sequence. In the simplest case the return is the sum of rewards: 
+\begin{equation}
+G_t \stackrel{.}{=} R_{t+1} + R_{t+2} + R_{t+3} + ... +  R_{T} \numberthis \label{eq:return_1} \quad [3.7]
+\end{equation}
+where $T$ is a final time step.
+When there is a natural notion of final time step ($T$), the agent-environment interaction breaks naturally into sub-sequences (\emph{episodes}) and the next episode begins independently of how the previous one ended. Tasks with episodes are called \emph{episodic tasks}. Each episodes ends in a special state called \emph{terminal state} with different rewards for the different outcomes.  $\mathcal{S}^{+}$ is the set of all states plus the terminal state.
+
+When the agent-environment interaction does not break naturally into episodes but goes on continually without limit, we call these \emph{continuing tasks}.
+The previous formulation of return \ref{eq:return_1} is problematic because $T=\infty$. 
+
+It is introduced the \emph{total discounted return} expressed as the sum of rewards (opportunely discounted using the \emph{discount rate} $0 \le \gamma \le 1$):
+\begin{align*}
+G_t & \stackrel{.}{=} R_{t+1} + \gamma R_{t+2} + \gamma^2 R_{t+3} + ...\\
+& = \sum_{k = 0}^\infty \gamma^k R_{t + k + 1} \numberthis \label{eq:discounted_return_1} \quad [3.8]\\
+& = R_{t+1} + \gamma G_{t+1} \numberthis \label{eq:discounted_return_2} \quad [3.9]
+\end{align*}
+
+To unify the notation for episodic and continuing tasks we use:
+
+\begin{equation}
+G_t \stackrel{.}{=} \sum_{k = t+1}^T \gamma^{k-t-1} R_{k} \numberthis \label{eq:discounted_return_generic} \quad [3.11]
+\end{equation}
+
+including the possibility that $T=\infty$ or $\gamma = 1$ \emph{but not both}.
+\subsection{Policy}
+A \emph{policy} is a mapping from a state to probabilities of selecting each possible action:
+\begin{equation}
+\pi(a|s)
+\label{eq: policy}
+\end{equation}
+That is the probability of select an action $A_t = a$ if $S_t = s$.
+
 \subsection{Value Functions}
 \emph{State-Value function} describes \emph{how good} is to be in a specific state $s$ under a certain policy $\pi$.
-Informally, is the expected return (expected cumulative discounted reward) when starting from $s$ and following $\pi$
+Informally, is the expected return (expected cumulative discounted reward) when starting from $s$ and following $\pi$:
 \begin{align*}
 v_{\pi}(s) & \stackrel{.}{=} \mathbb{E}_{\pi}[G_t | S_t = s] \numberthis \label{eq:v_def} \quad [3.12] \\
 & = \mathbb{E}_{\pi}[R_{t+1} + \gamma G_{t+1} | S_t = s] \numberthis  \quad [by \ 3.9] \\
@@ -172,14 +185,13 @@ v_{\pi}(s) & \stackrel{.}{=} \mathbb{E}_{\pi}[G_t | S_t = s] \numberthis \label{
 The last one is the \textbf{Bellman equation for $v_\pi$}.
 
 \emph{Action-Value function (Q-Function)} describes \emph{how good} is to perform a given action $a$ in a given state $s$ under a certain policy $\pi$. 
-Informally, is the expected return when starting from $s$, taking action $a$ and following $\pi$
+Informally, is the expected return when starting from $s$, taking action $a$ and thereafter following $\pi$:
 \begin{align*}
 q_{\pi}(s,a) & \stackrel{.}{=} \mathbb{E}_{\pi}[G_t | S_t = s, A_t = a]  \numberthis \label{eq:q_def}\quad [3.13] \\
 & = \sum_{s',r} p(s',r|s,a) \Big[r + \gamma \sum_{a'} \pi(a'|s') q_{\pi}(a',s') \Big]  \numberthis \label{eq:q_bellman}\quad [Ex \ 3.17]
 \end{align*}
 The last one is the \textbf{Bellman equation for $q_\pi$}.
 \vfill\null
-\columnbreak
 
 \subsubsection{Relation between Value Functions}
 \begin{align*}
