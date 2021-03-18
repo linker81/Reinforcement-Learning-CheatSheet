@@ -150,7 +150,7 @@ where $T$ is a final time step.
 When there is a natural notion of final time step ($T$), the agent-environment interaction breaks naturally into sub-sequences (\emph{episodes}) and the next episode begins independently of how the previous one ended. Tasks with episodes are called \emph{episodic tasks}. Each episodes ends in a special state called \emph{terminal state} with different rewards for the different outcomes.  $\mathcal{S}^{+}$ is the set of all states plus the terminal state.
 
 When the agent-environment interaction does not break naturally into episodes but goes on continually without limit, we call these \emph{continuing tasks}.
-The previous formulation of return \ref{eq:return_1} is problematic because $T=\infty$. 
+The previous formulation of return (Eq. \ref{eq:return_1}) is problematic because $T=\infty$. 
 
 It is introduced the \emph{total discounted return} expressed as the sum of rewards (opportunely discounted using the \emph{discount rate} $0 \le \gamma \le 1$):
 \begin{align*}
@@ -176,7 +176,7 @@ That is the probability of select an action $A_t = a$ if $S_t = s$.
 
 \subsection{Value Functions}
 \emph{State-Value function} describes \emph{how good} is to be in a specific state $s$ under a certain policy $\pi$.
-Informally, is the expected return (expected cumulative discounted reward) when starting from $s$ and following $\pi$:
+Informally, it is the expected return (expected cumulative discounted reward) when starting from $s$ and following $\pi$. For any policy $\pi$ and $\forall s \in \mathcal{S}$:
 \begin{align*}
 v_{\pi}(s) & \stackrel{.}{=} \mathbb{E}_{\pi}[G_t | S_t = s] \numberthis \label{eq:v_def} \quad [3.12] \\
 & = \mathbb{E}_{\pi}[R_{t+1} + \gamma G_{t+1} | S_t = s] \numberthis  \quad [by \ 3.9] \\
@@ -238,10 +238,10 @@ q_{*}(s,a) & = \sum_{s',r} p(s',r|s,a) \Big[r + \gamma v_{*}(s') \Big]  \quad [E
 Collection of algorithms that can be used to compute optimal policies given a perfect model of the environment as a MDP. 
 
 \subsection{Policy Evaluation [Prediction]}
-If the environment's dynamic is completely known we can use \ref{eq:v_bellman} solving the system of $|\mathcal{S}|$ equations in  $|\mathcal{S}|$ unknowns ($v_\pi(s), s \in \mathcal{S}$). \\
-We also can use an iterative solution:
+If the environment's dynamic is completely known, the Eq. \ref{eq:v_bellman} is a system of $|\mathcal{S}|$ equations in  $|\mathcal{S}|$ unknowns ($v_\pi(s), s \in \mathcal{S}$). \\
+We also can use an iterative solution,  $\forall s \in \mathcal{S}$:
 \begin{align*}
-v_{k+1}(s) & = \mathbb{E}_{\pi}[R_{t+1} + \gamma v_{k}(S_{t+1}) | S_t = s] \\
+v_{k+1}(s) & \stackrel{.}{=} \mathbb{E}_{\pi}[R_{t+1} + \gamma v_{k}(S_{t+1}) | S_t = s] \\
 & = \sum_{a} \pi(a|s) \sum_{s' ,r} p(s',r | s, a)  [r + \gamma v_{k}(s')] \numberthis  \quad [4.5]
 \end{align*}
 We can compute new values $v_{k+1}(s)$ from old values $v_k(s)$ without change old values or update the values \emph{in-place}.
@@ -265,6 +265,7 @@ Initialize V(s), for all $s \in \mathcal{S}^{+}$ arbitrarily, except V(terminal)
 \caption{Iterative Policy Evaluation - estimating $V \sim v_{\pi}$ - [§4.1]}
 \end{algorithm}
 
+The algorithm tests the quantity $\max_{s \in \mathcal{S}} |v_{k+1}(s) - v_k(s)|$ after each \emph{sweep} and stops when it is sufficiently small ($\Delta < \theta$).
 %\vfill\null
 %\columnbreak
 
@@ -289,7 +290,7 @@ Policy iteration consists of two simultaneous, interacting processes: one making
  3. Policy Improvement \\
  \emph{policy-stable} $ \leftarrow $ \emph{true} \\
   \ForEach{$s \in S$} {
-        \emph{old-action} $\leftarrow \pi(s)$
+        \emph{old-action} $\leftarrow \pi(s)$\\
         $\pi(s) \leftarrow \argmax\limits_a\sum\limits_{s', r} p(s',r | s, a)  \begin{bmatrix}
             r + \gamma V(s')
         \end{bmatrix}$ \\
@@ -307,7 +308,7 @@ Policy iteration consists of two simultaneous, interacting processes: one making
 	go to 2
 }
 
-\caption{Policy Iteration - estimating $\pi \sim \pi_*$ - [§4.3]}
+\caption{Policy Iteration - estimating $\pi \sim \pi_*$ - deterministic policy - [§4.3]}
 \end{algorithm}
 
 \subsection{Value Iteration}
@@ -346,7 +347,7 @@ The entire class of \emph{truncated policy iteration} algorithms can be thought 
 
 \subsection{Generalized Policy Iteration}
 Generalized Policy Iteration is a way to refer to the general idea of letting policy-evaluation and policy-improvement processes interact, independent of the granularity and other details of the two processes. \\
-Almost all reinforcement learning methods are well described as GPI. That is, all have identifiable policies and value functions, with the policy always being improved with respect to the value function and the value function always being driven toward the value function for the policy, as suggested by the diagram below [§4.6].
+Almost all reinforcement learning methods are well described as GPI. That is, all have identifiable policies and value functions, with the policy always being improved with respect to the value function and the value function always being driven toward the value function for the policy, as suggested by the diagram below [§4.6]:
 \begin{center}
 \includegraphics[width=0.6\linewidth]{./images/GPI.png}
 \end{center}
