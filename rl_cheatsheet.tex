@@ -469,7 +469,7 @@ Initialize:for all $s \in \mathcal{S}$, $a \in \mathcal{A}(s)$ \\
     		$G \leftarrow \gamma G + R_{t+1}$ \\
     		$C(S_t,A_t) \leftarrow C(S_t,A_t) + W$ \\
     		$Q(S_t,A_t) \leftarrow Q(S_t,A_t) + \frac{W}{C(S_t,A_t)}[G - Q(S_t,A_t)]$ \\
-    		$\pi(s) \leftarrow \argmax_a +Q(S_T,a)$
+    		$\pi(s) \leftarrow \argmax_a +Q(S_T,a)$ \\
 		\If{$A_t \neq \pi(S_t)$}
         	{
         		exit For Loop
@@ -489,7 +489,7 @@ Initialize:for all $s \in \mathcal{S}$, $a \in \mathcal{A}(s)$ \\
 \section{Temporal-Difference Learning}
 
 \subsection{TD Prediction}
-Starting from \ref{eq:incremental_mc}, we can consider a generic update rule of $V(S_t)$
+Starting from Eq. \ref{eq:incremental_mc}, we can consider a generic update rule of $V(S_t)$
 
 \begin{align*}
 V(S_t) \leftarrow V(S_t) + \alpha (G_t - V(S_t)) \label{eq:constant_alpha_mc}\numberthis \quad [6.1]
@@ -513,7 +513,7 @@ Initialize: $V(s) \in \mathbb{R}$ for all $s \in \mathcal{S}^+$ except for V(ter
     \ForEach{step of episode - until $S$ is terminal}
     {
     	$A \leftarrow$ action given by $\pi$ for S\\
-    	take action $A$, observe $R$, $S'$\\
+    	Take action $A$, observe $R$, $S'$\\
     	$V(S) \leftarrow V(S) + \alpha (R + \gamma V(S') - V(S))$ \\
     	$S \leftarrow S'$   
     }
@@ -527,16 +527,17 @@ v_{\pi}(s) & \stackrel{.}{=} \mathbb{E}_{\pi}[G_t | S_t = s]  \label{eq:v_pi_MC}
 & = \mathbb{E}_{\pi}[R_{t+1} + \gamma G_{t+1} | S_t = s] \label{eq:v_pi_MC2}  \numberthis  \quad [by \ 3.9] \\
 & = \mathbb{E}_{\pi}[R_{t+1} + \gamma v_{\pi}(S_{t+1}) | S_t = s] \label{eq:v_pi_TD} \numberthis  \quad [6.4] \\
 \end{align*}
-MC methods use an estimate of  \ref{eq:v_pi_MC} as a target. 
-The MC target is an estimate because the expected value in \ref{eq:v_pi_MC} is not known; a sample return is used in place of the real expected return.\\
+MC methods use an estimate of Eq. \ref{eq:v_pi_MC} as a target. 
+The MC target is an estimate because the expected value in Eq. \ref{eq:v_pi_MC} is not known; a sample return is used in place of the real expected return.\\
 
-DP and TD methods use an estimate of \ref{eq:v_pi_TD} as a target.\\
+DP and TD methods use an estimate of Eq. \ref{eq:v_pi_TD} as a target.\\
 The DP target is an estimate because $v_{\pi}(S_{t+1})$ is not known and the current estimate, $V(S_{t+1})$, is used instead. \\
-The TD target is an estimate because it samples the expected values in \ref{eq:v_pi_TD} and it uses the current estimate $V$ instead of the true $v_{\pi}$.\\
+The TD target is an estimate because it samples the expected values in Eq. \ref{eq:v_pi_TD} and it uses the current estimate $V$ instead of the true $v_{\pi}$.\\
 
 TD methods update their estimates based in part on other estimates. They learn a guess from a guess, i.e. they \textbf{bootstrap}.
 TD and MC methods have an advantage over DP methods in that they do not require a model of the environment, of its reward and next-state probability distributions.
-The most obvious advantage of TD methods over Monte Carlo methods is that they are naturally implemented in an online, fully incremental fashion. 
+
+The most obvious advantage of TD methods over MC methods is that they are naturally implemented in an online, fully incremental fashion. 
 With MC methods one must wait until the end of an episode, because only then the return is known, whereas with TD methods one needs wait only one time step.
 In practice, TD methods have usually been found to converge faster than constant-$\alpha$ MC methods on stochastic tasks.\\
 The error, available at time $t+1$, between $V(S_t)$ and the better estimate $R_{t+1} + \gamma V(S_{t+1})$ is called \emph{TD error}:
@@ -548,13 +549,15 @@ The error, available at time $t+1$, between $V(S_t)$ and the better estimate $R_
 Sarsa (State-action-reward-state-action) is an on-policy TD control. 
 Sarsa is sample-based version of policy iteration which uses Bellman equations for action values. 
 The update rule:
-\begin{equation*}
-    Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha \left[R_{t+1} + \gamma Q(S_{t+1}, A_{t+1}) - Q(S_t, A_t) \right] \numberthis  %\quad [6.7]
-\end{equation*}
+
+\begin{align*}
+    Q(S_t, A_t) \leftarrow & \\
+    Q(S_t, A_t) + & \alpha \left[R_{t+1} + \gamma Q(S_{t+1}, A_{t+1}) - Q(S_t, A_t) \right] \numberthis  \quad [6.7]
+\end{align*}
 
 \begin{algorithm}[H]
  Params: step size $\alpha \in ]0,1]$, small $\epsilon > 0$ \\
- Initialise $Q(s,a)$ for all $s \in \mathcal{S}^+$ and $a \in \mathcal{A}(s)$, arbitrarily except that $Q(terminal-state, \cdot) = 0$\\
+ Initialize $Q(s,a)$ for all $s \in \mathcal{S}^+$ and $a \in \mathcal{A}(s)$, arbitrarily except that $Q(terminal-state, \cdot) = 0$\\
 \ForEach{episode}
 {
     Initialize $S$\\
@@ -577,7 +580,8 @@ Q-learning is a sample-based version of value iteration which iteratively applie
 The update rule:
 
 \begin{align*}
-    Q(S_t, A_t) \leftarrow Q(S_t, A_t) + \alpha \left[R_{t+1} + \gamma \max_a Q(S_{t+1}, a) - Q(S_t, A_t) \right] \numberthis % \quad [6.8]
+    Q(S_t, A_t) \leftarrow & \\ 
+    Q(S_t, A_t) + & \alpha \left[R_{t+1} + \gamma \max_a Q(S_{t+1}, a) - Q(S_t, A_t) \right] \numberthis \quad [6.8]
 \end{align*}
 
 \begin{algorithm}[H]
@@ -594,7 +598,7 @@ The update rule:
     	$S \leftarrow S'$
     }
  }
-\caption{Q-Learning Off-policy TD Control - estimating $\pi \sim \pi_*$  [§6.5]}
+\caption{Q-Learning - Off-policy TD Control - estimating $\pi \sim \pi_*$  [§6.5]}
 \end{algorithm}
 
 \subsection{Expected Sarsa}
@@ -602,18 +606,37 @@ Similar to Q-Learning, the update rule of Expected Sarsa, takes the expected val
 \begin{align*}
     Q(S_t, A_t)  \leftarrow & \\
     Q(S_t, A_t) + \alpha [R_{t+1} & + \gamma \mathbb{E}_{\pi} [ Q(S_{t+1}, A_{t+1}) | S_{t+1} ] - Q(S_t, A_t) ] \\
-    Q(S_t, A_t) + \alpha [R_{t+1} & + \gamma \sum_a \pi(a| S_{t+1}) Q(S_{t+1}, a) - Q(S_t, A_t)] \quad [6.9]   
+    Q(S_t, A_t) + \alpha [R_{t+1} & + \gamma \sum_a \pi(a| S_{t+1}) Q(S_{t+1}, a) - Q(S_t, A_t)] \numberthis \quad [6.9]   
 \end{align*}
 
 The next action is sampled from $\pi$. However, the expectation over actions is computed independently of the action actually selected in the next state. 
 In fact, it is not necessary that $\pi$ is equal to the behavior policy. This means that Expected Sarsa, like Q-learning, can be used to learn off-policy without importance sampling. \\
 If the target policy is greedy with respect to its action value estimates we obtain the Q-Learning. Hence Q-Learning is a special case of Expected Sarsa.
+\end{multicols}
+
+\newpage
+\begin{multicols}{3}
+\section{\emph{n}-step Bootstrapping}
 
 \subsection{\emph{n}-step TD Prediction}
 
-MC methods updates the estimate of $v_{\pi}(S_t)$ for each state based on the entire sequence of observed rewards from that state until the end of the episode using: $G_t \stackrel{.}{=} R_{t+1} + \gamma R_{t+2} + ... + \gamma^{T-t-1}R_T$.\\
-In the one-step TD, instead, the update, is based on just the one next reward, bootstrapping from the value of the state one step later as a proxy for the remaining rewards using \emph{one-step return}: $G_{t:t+1}\stackrel{.}{=} R_{t+1} + \gamma V_t(S_{t+1})$.\\
-In the n-step TD, it is used the \emph{n-step return}: $G_{t:t+n}\stackrel{.}{=} R_{t+1} + \gamma R_{t+2} + ... + \gamma^{n-1} R_{t+n} + \gamma^n V_{t+n-1}(S_{t+n})$.
+MC methods updates the estimate of $v_{\pi}(S_t)$ for each state based on the entire sequence of observed rewards from that state until the end of the episode using: 
+
+\begin{equation}
+G_t \stackrel{.}{=} R_{t+1} + \gamma R_{t+2} + ... + \gamma^{T-t-1}R_T \numberthis
+\end{equation}
+
+In the one-step TD, instead, the update, is based on just the one next reward, bootstrapping from the value of the state one step later as a proxy for the remaining rewards using \emph{one-step return}: 
+
+\begin{equation}
+G_{t:t+1}\stackrel{.}{=} R_{t+1} + \gamma V_t(S_{t+1})  \numberthis
+\end{equation}
+
+In the n-step TD, it is used the \emph{n-step return}: 
+
+\begin{equation}
+G_{t:t+n}\stackrel{.}{=} R_{t+1} + \gamma R_{t+2} + ... + \gamma^{n-1} R_{t+n} + \gamma^n V_{t+n-1}(S_{t+n}) \numberthis
+\end{equation}
 
 \end{multicols}
 
